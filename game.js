@@ -18,8 +18,8 @@ finalSound.volume = 0.2;
 boostSound.volume = 0.2;
 
 // Dikey format için boyutları değiştir
-canvas.width = 400;
-canvas.height = 800;
+canvas.width = 360;
+canvas.height = 640;
 
 // Ana menü için değişkenler
 let gameState = 'firstMenu';
@@ -137,8 +137,8 @@ const startPlatform = {
 const player = {
     x: canvas.width / 2,
     y: startPlatform.y - 50,
-    width: 60,
-    height: 84,
+    width: 50,
+    height: 70,
     speed: 5,
     jumpForce: -12,
     velocityY: 0,
@@ -1338,12 +1338,24 @@ touchpad.addEventListener('touchend', () => {
 
 // Jump button kontrolü
 jumpButton.addEventListener('touchstart', (e) => {
+    if (gameState === 'playing') {
+        if (player.velocityY === 0 || (player.canDoubleJump && !player.hasDoubleJumped)) {
+            player.velocityY = player.jumpForce;
+            jumpSound.currentTime = 0;
+            jumpSound.play();
+            
+            if (player.velocityY !== 0) {
+                player.hasDoubleJumped = true;
+            }
+        }
+    }
     keys.jump = true;
     e.preventDefault();
 });
 
-jumpButton.addEventListener('touchend', () => {
+jumpButton.addEventListener('touchend', (e) => {
     keys.jump = false;
+    e.preventDefault();
 });
 
 // Canvas'a dokunma olayı ekle
