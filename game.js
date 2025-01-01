@@ -268,14 +268,24 @@ for (let i = 0; i < 2; i++) {
 }
 
 // Müzik başlatma fonksiyonu
-async function playBackgroundMusicFromRandomPoint() {
+function playBackgroundMusic() {
+    console.log("Müzik başlatılmaya çalışılıyor...");
+    console.log("Müzik dosyası:", backgroundMusic.src);
+    
     try {
-        // Müziği baştan başlat
-        backgroundMusic.currentTime = 0;
-        await backgroundMusic.play();
-        console.log("Müzik başlatıldı");
+        const playPromise = backgroundMusic.play();
+        if (playPromise !== undefined) {
+            playPromise
+                .then(() => {
+                    console.log("Müzik başarıyla başlatıldı");
+                    backgroundMusic.currentTime = Math.random() * (backgroundMusic.duration || 30);
+                })
+                .catch(error => {
+                    console.error("Müzik başlatma hatası:", error);
+                });
+        }
     } catch (error) {
-        console.log("Müzik başlatılamadı:", error);
+        console.error("Müzik çalma hatası:", error);
     }
 }
 
@@ -284,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Kullanıcı etkileşimi için bir kere tıklama gerekiyor
     document.addEventListener('click', async () => {
         if (!backgroundMusic.playing) {
-            await playBackgroundMusicFromRandomPoint();
+            await playBackgroundMusic();
         }
     }, { once: true });
 });
@@ -299,7 +309,7 @@ document.addEventListener('keydown', async (e) => {
         document.querySelector('.controls-info').style.display = 'block';
         
         if (!backgroundMusic.playing) {
-            await playBackgroundMusicFromRandomPoint();
+            await playBackgroundMusic();
         }
         return;
     }
@@ -490,7 +500,7 @@ let bgOffset = 0;
 function gameLoop() {
     // Müzik kontrolü
     if (gameState === 'playing' && backgroundMusic.ended) {
-        playBackgroundMusicFromRandomPoint();
+        playBackgroundMusic();
     }
     
     updateGame();
@@ -1219,7 +1229,7 @@ function restartGame() {
     scoreScale = 1;
     
     gameState = 'countdown';
-    playBackgroundMusicFromRandomPoint();
+    playBackgroundMusic();
 }
 
 // Oyuncu çizim fonksiyonu
@@ -1363,7 +1373,7 @@ canvas.addEventListener('touchstart', (e) => {
     if (gameState === 'firstMenu') {
         gameState = 'countdown';
         gameStartTime = Date.now();
-        playBackgroundMusicFromRandomPoint();
+        playBackgroundMusic();
     }
     e.preventDefault();
 });
@@ -1385,21 +1395,13 @@ document.addEventListener('keydown', (e) => {
     if (e.code === 'Space' || e.code === 'KeyW') {
         if (!keys.jump) {
             if (gameState === 'firstMenu') {
-                if (!isMobile()) { // Sadece mobil değilse space ile başlat
+                if (!isMobile()) {
                     gameState = 'countdown';
                     gameStartTime = Date.now();
-                    playBackgroundMusicFromRandomPoint();
+                    playBackgroundMusic();
                 }
-            } else if (gameState === 'playing') {
-                if (player.canDoubleJump && !player.hasDoubleJumped) {
-                    player.velocityY = player.jumpForce;
-                    player.hasDoubleJumped = true;
-                    jumpSound.currentTime = 0;
-                    jumpSound.play();
-                }
-            } else if (gameState === 'gameover') {
-                restartGame();
             }
+            // ... diğer kontroller
         }
         keys.jump = true;
     }
