@@ -1344,4 +1344,53 @@ jumpButton.addEventListener('touchstart', (e) => {
 
 jumpButton.addEventListener('touchend', () => {
     keys.jump = false;
+});
+
+// Canvas'a dokunma olayı ekle
+canvas.addEventListener('touchstart', (e) => {
+    if (gameState === 'firstMenu') {
+        gameState = 'countdown';
+        gameStartTime = Date.now();
+        playBackgroundMusicFromRandomPoint();
+    }
+    e.preventDefault();
+});
+
+// Mobil cihaz kontrolü
+function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// Oyun başlangıcında mobil kontrolü
+if (isMobile()) {
+    document.querySelector('.controls-info').style.display = 'none';
+} else {
+    document.querySelector('.controls-info').textContent = 'Press SPACE to Start';
+}
+
+// Space tuşu kontrolünü güncelle
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' || e.code === 'KeyW') {
+        if (!keys.jump) {
+            if (gameState === 'firstMenu') {
+                if (!isMobile()) { // Sadece mobil değilse space ile başlat
+                    gameState = 'countdown';
+                    gameStartTime = Date.now();
+                    playBackgroundMusicFromRandomPoint();
+                }
+            } else if (gameState === 'playing') {
+                if (player.canDoubleJump && !player.hasDoubleJumped) {
+                    player.velocityY = player.jumpForce;
+                    player.hasDoubleJumped = true;
+                    jumpSound.currentTime = 0;
+                    jumpSound.play();
+                }
+            } else if (gameState === 'gameover') {
+                restartGame();
+            }
+        }
+        keys.jump = true;
+    }
+    if (e.code === 'KeyA') keys.a = true;
+    if (e.code === 'KeyD') keys.d = true;
 }); 
