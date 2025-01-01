@@ -20,7 +20,7 @@ A fun and challenging platformer game where you play as Chog, collecting stars w
 
 ## Play Online
 
-You can play the game online at [Vercel deployment link]
+You can play the game online at [[Chog the Stars](https://chogthestars.vercel.app/)]
 
 ## Development
 
@@ -31,4 +31,4 @@ To run the game locally:
 
 ## Credits
 
-Game developed by [Your Name] 
+Game developed by [[crgtleb](https://x.com/crgtleb)] 
